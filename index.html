@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Drag n Drop</title>
+  <style>
+    *,
+    ::before,
+    ::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+    }
+
+    .list-selection {
+      width: 200px;
+      min-height: 200px;
+      border: 2px solid red;
+
+      img {
+        max-width: 100%;
+      }
+    }
+
+    .highlight {
+      opacity: 0.7;
+      background-color: orange;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="list-selection"></div>
+
+  <!-- dragging / dropping logic goes here 
+    what should happen?
+    when an item is dragged
+  -->
+  <script>
+
+    const list = document.querySelector(".list-selection")
+
+    // THIS here is actually necessary (!)
+    // to ALLOW the dropping of an item on here!
+    list.addEventListener("dragover", (e) => {
+      e.preventDefault()
+      list.classList.add("highlight")
+    })
+    list.addEventListener("mouseleave", () => {
+      list.classList.remove("highlight")
+    })
+    list.ondrop = (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      list.classList.remove("highlight")
+
+      // no file? - no action!
+      if (!e.dataTransfer.files.length) return
+
+      /** @type {File} */
+      const file = e.dataTransfer.files[0]
+      console.log(file)
+
+      // just images bro...
+      if(!file.type.startsWith("image")) return
+
+      // convert image to 
+      const fReader = new FileReader();
+      fReader.readAsDataURL(file); // dataUri / base64 string
+      fReader.onload = function () {
+        const dataUri = fReader.result
+        // console.log(dataUri);
+
+        // create image
+        const img = new Image()
+        img.src = dataUri
+        img.onload = () => {
+          list.innerHTML = ""
+          list.appendChild(img)
+        }
+        // 
+      };
+      fReader.onerror = function (error) {
+        console.log('Error: ', error);
+      };
+
+    }
+
+
+  </script>
+
+</body>
+
+</html>
