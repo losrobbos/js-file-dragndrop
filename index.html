@@ -34,6 +34,11 @@
       opacity: 0.7;
       background-color: orange;
     }
+
+    .errors {
+      color: red;
+      font-weight: bold;
+    }
   </style>
 
 </head>
@@ -41,6 +46,7 @@
 <body>
 
   <div class="file-drop"></div>
+  <div class="errors"></div>
 
   <!-- dragging / dropping logic goes here 
     what should happen?
@@ -49,6 +55,7 @@
   <script>
 
     const fileDropzone = document.querySelector(".file-drop")
+    const divErrors = document.querySelector(".errors")
 
     // THIS here is actually necessary (!)
     // to ALLOW the dropping of an item on here!
@@ -68,30 +75,31 @@
 
       /** @type {File} */
       const file = e.dataTransfer.files[0]
-      console.log(file)
+      console.log(file.size)
+
+      divErrors.innerHTML = ""
 
       // just images bro...
-      if(!file.type.startsWith("image")) return
+      if (!file.type.startsWith("image")) {
+        divErrors.innerHTML = "No image? F**k off!"
+        return
+      }
 
-      // convert image to 
-      const fReader = new FileReader();
-      fReader.readAsDataURL(file); // dataUri / base64 string
-      fReader.onload = function () {
-        const dataUri = fReader.result
-        // console.log(dataUri);
+      // dont flush us with your biggies...
+      if(file.size > 40000) {
+        divErrors.innerHTML = "File tooo big. 40KB max pleeeze"
+        return
+      }
 
-        // create image
-        const img = new Image()
-        img.src = dataUri
-        img.onload = () => {
-          fileDropzone.innerHTML = ""
-          fileDropzone.appendChild(img)
-        }
-        // 
-      };
-      fReader.onerror = function (error) {
-        console.log('Error: ', error);
-      };
+      // create image
+      const img = new Image()
+      img.src = URL.createObjectURL(file)
+      img.onload = () => {
+        // clear old content
+        fileDropzone.innerHTML = ""
+        // insert new one
+        fileDropzone.appendChild(img)
+      }
 
     }
 
