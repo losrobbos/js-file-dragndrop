@@ -75,7 +75,6 @@
 
       /** @type {File} */
       const file = e.dataTransfer.files[0]
-      console.log(file.size)
 
       divErrors.innerHTML = ""
 
@@ -86,20 +85,18 @@
       }
 
       // dont flush us with your biggies...
-      if(file.size > 40000) {
-        divErrors.innerHTML = "File tooo big. 40KB max pleeeze"
+      if (file.size > 200000) {
+        divErrors.innerHTML = "File tooo big. 100KB max pleeeze"
         return
       }
 
       // create image
       const img = new Image()
       img.src = URL.createObjectURL(file)
-      img.onload = () => {
-        // clear old content
-        fileDropzone.innerHTML = ""
-        // insert new one
-        fileDropzone.appendChild(img)
-      }
+      // clear old content
+      fileDropzone.innerHTML = ""
+      // insert new one
+      fileDropzone.appendChild(img)
 
     }
 
