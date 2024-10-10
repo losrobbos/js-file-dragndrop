@@ -56,12 +56,11 @@
       e.preventDefault()
       fileDropzone.classList.add("highlight")
     })
-    fileDropzone.addEventListener("mouseleave", () => {
+    fileDropzone.addEventListener("dragleave", () => {
       fileDropzone.classList.remove("highlight")
     })
     fileDropzone.ondrop = (e) => {
       e.preventDefault()
-      e.stopPropagation()
       fileDropzone.classList.remove("highlight")
 
       // no file? - no action!
